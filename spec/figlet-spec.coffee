@@ -17,13 +17,24 @@ describe "Figlet", ->
     editor = editorView.getEditor()
 
     editorView.setText("dummy")
-    editor.setSelectedBufferRange([[0,0],[0,5]])
 
     promise = atom.packages.activatePackage('figlet')
 
-  describe 'with a selection in an editor', ->
-    describe 'when figlet:convert is triggered', ->
+
+  describe 'when figlet:convert is triggered', ->
+    describe 'with no selection', ->
+      it 'does not display the font selection list', ->
+        editorView.trigger 'figlet:convert'
+
+        waitsForPromise ->
+          promise
+
+        runs ->
+          expect(atom.workspaceView.find('.figlet-font-list').view()).not.toExist()
+
+    describe 'with a selection', ->
       it 'displays the font selection list', ->
+        editor.setSelectedBufferRange([[0,0],[0,5]])
         editorView.trigger 'figlet:convert'
 
         waitsForPromise ->
@@ -31,3 +42,12 @@ describe "Figlet", ->
 
         runs ->
           expect(atom.workspaceView.find('.figlet-font-list').view()).toExist()
+
+#       it 'replaces the text with the ascii art version', ->
+#         expect(editor.getText())
+#         .toEqual('''#####  #    # #    # #    # #   #
+# #    # #    # ##  ## ##  ##  # #
+# #    # #    # # ## # # ## #   #
+# #    # #    # #    # #    #   #
+# #    # #    # #    # #    #   #
+# #####   ####  #    # #    #   #   ''')

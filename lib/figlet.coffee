@@ -11,7 +11,10 @@ module.exports =
       editor = atom.workspaceView.getActiveView()
       return unless editor?
 
-      @figletView ||= new FigletFontView(editor)
+      if @figletView?
+        @figletView.setEditorView(editor)
+      else
+        @figletView = new FigletFontView(editor)
 
       if @figletView.hasParent()
         @figletView.cancel()
