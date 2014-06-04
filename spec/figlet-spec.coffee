@@ -7,12 +7,27 @@ Figlet = require '../lib/figlet'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Figlet", ->
-  activationPromise = null
+  [editorView, editor, promise] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
-    activationPromise = atom.packages.activatePackage('figlet')
+    atom.workspaceView.openSync('sample.js')
+    atom.workspaceView.attachToDom()
+    editorView = atom.workspaceView.getActiveView()
+    editor = editorView.getEditor()
 
-  describe 'failing spec', ->
-    it 'should fail', ->
-      expect('life').toBe('easy')
+    editorView.setText("dummy")
+    editor.setSelectedBufferRange([[0,0],[0,5]])
+
+    promise = atom.packages.activatePackage('figlet')
+
+  describe 'with a selection in an editor', ->
+    describe 'when figlet:convert is triggered', ->
+      it 'displays the font selection list', ->
+        editorView.trigger 'figlet:convert'
+
+        waitsForPromise ->
+          promise
+
+        runs ->
+          expect(atom.workspaceView.find('.figlet-font-list').view()).toExist()
