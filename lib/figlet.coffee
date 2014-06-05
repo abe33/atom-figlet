@@ -4,7 +4,7 @@ module.exports =
   figletView: null
 
   configDefaults:
-    defaultTheme: 'banner'
+    defaultFont: 'Banner'
 
   activate: (state) ->
     atom.workspaceView.command 'figlet:convert', =>

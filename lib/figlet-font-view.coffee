@@ -1,4 +1,5 @@
-{SelectListView}  = require 'atom'
+{$$, SelectListView}  = require 'atom'
+figlet = require 'figlet'
 
 module.exports =
 class FigletFontView extends SelectListView
@@ -9,9 +10,19 @@ class FigletFontView extends SelectListView
     super
     @addClass('figlet-font-list overlay from-top')
     @setEditorView(editorView)
+    figlet.fonts (err, data) =>
+      @setItems data.map (f) -> name: f
+
+      @find('.selected').removeClass('selected')
+      @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']").addClass('selected')
 
   getFilterKey: ->
     'name'
+
+  viewForItem: (item) ->
+    $$ ->
+      @li 'data-font': item.name, =>
+        @raw item.name
 
   setEditorView: (@editorView) ->
     {@editor} = @editorView

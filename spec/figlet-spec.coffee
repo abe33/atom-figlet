@@ -1,5 +1,6 @@
 {WorkspaceView} = require 'atom'
 Figlet = require '../lib/figlet'
+figlet = require 'figlet'
 
 # Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
 #
@@ -7,7 +8,7 @@ Figlet = require '../lib/figlet'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Figlet", ->
-  [editorView, editor, promise] = []
+  [editorView, editor, promise, fonts] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
@@ -20,28 +21,33 @@ describe "Figlet", ->
 
     promise = atom.packages.activatePackage('figlet')
 
+    waitsForPromise -> promise
+
+    runs -> figlet.fonts (err, data) -> fonts = data
+
+    waitsFor -> fonts
 
   describe 'when figlet:convert is triggered', ->
     describe 'with no selection', ->
       it 'does not display the font selection list', ->
         editorView.trigger 'figlet:convert'
 
-        waitsForPromise ->
-          promise
-
         runs ->
           expect(atom.workspaceView.find('.figlet-font-list').view()).not.toExist()
 
     describe 'with a selection', ->
-      it 'displays the font selection list', ->
+      beforeEach ->
         editor.setSelectedBufferRange([[0,0],[0,5]])
         editorView.trigger 'figlet:convert'
 
-        waitsForPromise ->
-          promise
-
+      it 'displays the font selection list', ->
         runs ->
-          expect(atom.workspaceView.find('.figlet-font-list').view()).toExist()
+          list = atom.workspaceView.find('.figlet-font-list')
+
+          expect(list.view()).toExist()
+          expect(list.find('li').length).toEqual(fonts.length)
+          expect(list.find('li.selected').length).toEqual(1)
+          expect(list.find('li.selected').text()).toEqual('Banner')
 
 #       it 'replaces the text with the ascii art version', ->
 #         expect(editor.getText())
