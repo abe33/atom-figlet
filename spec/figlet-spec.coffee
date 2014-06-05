@@ -64,4 +64,7 @@ describe "Figlet", ->
           waitsFor -> expected
 
           runs ->
+            list = atom.workspaceView.find('.figlet-font-list')
+
             expect(editor.getText()).toEqual(expected)
+            expect(list.length).toEqual(0)

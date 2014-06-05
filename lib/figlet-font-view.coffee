@@ -47,6 +47,8 @@ class FigletFontView extends SelectListView
     figlet.text @editor.getSelectedText(), font: item.name, (err, data) =>
       @editor.insertText data
 
+    @detach()
+
   cancel: ->
     @detach()
 
