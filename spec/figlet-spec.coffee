@@ -48,6 +48,7 @@ describe "Figlet", ->
           expect(list.find('li').length).toEqual(fonts.length)
           expect(list.find('li.selected').length).toEqual(1)
           expect(list.find('li.selected').text()).toEqual('Banner')
+          expect(list.find('.list-group').scrollTop()).not.toEqual(0)
 
 #       it 'replaces the text with the ascii art version', ->
 #         expect(editor.getText())

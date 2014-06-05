@@ -13,8 +13,8 @@ class FigletFontView extends SelectListView
     figlet.fonts (err, data) =>
       @setItems data.map (f) -> name: f
 
-      @find('.selected').removeClass('selected')
-      @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']").addClass('selected')
+      itemView = @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']")
+      @selectItemView itemView
 
   getFilterKey: ->
     'name'
@@ -41,6 +41,8 @@ class FigletFontView extends SelectListView
     return unless @hasParent()
     @previouslyFocusedElement?.focus()
     super
+
+  confirmed: ->
 
   cancel: ->
     @detach()
