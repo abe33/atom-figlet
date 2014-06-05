@@ -51,11 +51,17 @@ describe "Figlet", ->
           expect(list.find('li.selected').text()).toEqual('Banner')
 
       describe 'when confirmed', ->
-        it 'replaces the text with the ascii art version', ->
+        it 'replaces the text with the ascii art version', (done) ->
           Figlet.figletView.confirmed name: 'Banner'
+          expected = null
 
           waitsFor -> editor.getText() isnt 'dummy'
 
           runs ->
-            figlet.text font: 'Banner', (err, data) ->
-              expect(editor.getText()).toEqual(data)
+            figlet.text 'dummy', font: 'Banner', (err, data) ->
+              expected = data
+
+          waitsFor -> expected
+
+          runs ->
+            expect(editor.getText()).toEqual(expected)
