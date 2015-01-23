@@ -1,4 +1,4 @@
-{WorkspaceView} = require 'atom'
+{$} = require 'atom-space-pen-views'
 Figlet = require '../lib/figlet'
 figlet = require 'figlet'
 
@@ -8,21 +8,22 @@ figlet = require 'figlet'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Figlet", ->
-  [editorView, editor, promise, fonts] = []
+  [workspaceElement, editorElement, editor, promise, fonts, list] = []
 
   beforeEach ->
-    atom.workspaceView = new WorkspaceView
-    atom.workspaceView.openSync('sample.js')
-    atom.workspaceView.attachToDom()
-    editorView = atom.workspaceView.getActiveView()
-    editor = editorView.getEditor()
-
-    editorView.setText("dummy")
     atom.config.set 'figlet.defaultFont', 'Banner'
 
-    promise = atom.packages.activatePackage('figlet')
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise -> promise
+    waitsForPromise -> atom.workspace.open('sample.js')
+
+    runs ->
+      editor = atom.workspace.getActiveTextEditor()
+      editorElement = atom.views.getView(editor)
+      editor.setText("dummy")
+
+    waitsForPromise -> atom.packages.activatePackage('figlet')
 
     runs -> figlet.fonts (err, data) -> fonts = data
 
@@ -31,24 +32,24 @@ describe "Figlet", ->
   describe 'when figlet:convert is triggered', ->
     describe 'with no selection', ->
       it 'does not display the font selection list', ->
-        editorView.trigger 'figlet:convert'
 
-        runs ->
-          expect(atom.workspaceView.find('.figlet-font-list').view()).not.toExist()
+        atom.commands.dispatch editorElement, 'figlet:convert'
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(list).not.toExist()
 
     describe 'with a selection', ->
       beforeEach ->
         editor.setSelectedBufferRange([[0,0],[0,5]])
-        editorView.trigger 'figlet:convert'
+        atom.commands.dispatch editorElement, 'figlet:convert'
+
+        list = workspaceElement.querySelector('.figlet-font-list')
 
       it 'displays the font selection list', ->
-        runs ->
-          list = atom.workspaceView.find('.figlet-font-list')
-
-          expect(list.view()).toExist()
-          expect(list.find('li').length).toEqual(fonts.length)
-          expect(list.find('li.selected').length).toEqual(1)
-          expect(list.find('li.selected').text()).toEqual('Banner')
+        expect(list).toExist()
+        expect(list.querySelectorAll('li').length).toEqual(fonts.length)
+        expect(list.querySelector('li.selected')).toExist()
+        expect(list.querySelector('li.selected').textContent).toEqual('Banner')
 
       describe 'when confirmed', ->
         it 'replaces the text with the ascii art version', (done) ->
@@ -64,7 +65,7 @@ describe "Figlet", ->
           waitsFor -> expected
 
           runs ->
-            list = atom.workspaceView.find('.figlet-font-list')
+            list = workspaceElement.querySelector('.figlet-font-list')
 
             expect(editor.getText()).toEqual(expected)
-            expect(list.length).toEqual(0)
+            expect(list).not.toExist()

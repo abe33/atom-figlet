@@ -9,6 +9,7 @@
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "figlet": "1.x"
+    "figlet": "1.x",
+    "atom-space-pen-views": "2.x"
   }
 }

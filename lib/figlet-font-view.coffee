@@ -1,4 +1,4 @@
-{$$, SelectListView}  = require 'atom'
+{$$, SelectListView}  = require 'atom-space-pen-views'
 figlet = require 'figlet'
 
 module.exports =
@@ -6,36 +6,34 @@ class FigletFontView extends SelectListView
   currentBuffer: null
   fontList: null
 
-  initialize: (editorView) ->
+  initialize: (editor) ->
     super
     @addClass('figlet-font-list overlay from-top')
-    @setEditorView(editorView)
+    @setEditor(editor)
     figlet.fonts (err, data) =>
       @setItems data.map (f) -> name: f
 
       itemView = @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']")
       @selectItemView itemView
-      console.log 'here'
 
-  getFilterKey: ->
-    'name'
+  getFilterKey: -> 'name'
 
   viewForItem: (item) ->
     $$ ->
       @li 'data-font': item.name, =>
         @raw item.name
 
-  setEditorView: (@editorView) ->
-    {@editor} = @editorView
+  setEditor: (@editor) ->
     @setCurrentBuffer(@editor.getBuffer())
 
   setCurrentBuffer: (@currentBuffer) ->
 
   attach: ->
-    return if @editor.getSelection().isEmpty()
+    return if @editor.getLastSelection().isEmpty()
 
     @storeFocusedElement()
-    atom.workspaceView.append(this)
+    workspaceElement = atom.views.getView(atom.workspace)
+    workspaceElement.appendChild(@element)
     @focusFilterEditor()
 
   detach: ->
