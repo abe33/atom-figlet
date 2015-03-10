@@ -1,3 +1,10 @@
+<a name="v0.3.1"></a>
+# v0.3.1 (2015-01-23)
+
+## :bug: Bug Fixes
+
+- Fix deprecations ([48471981](https://github.com/abe33/atom-figlet/commit/484719814180b6559f7a8aa1a745d51875f6eaf9))
+
 <a name="v0.3.0"></a>
 # v0.3.0 (2015-01-23)
 
