@@ -1,3 +1,16 @@
+<a name="v0.4.0"></a>
+# v0.4.0 (2015-04-28)
+
+## :sparkles: Features
+
+- Implement a figlet:convert-last command ([805d209c](https://github.com/abe33/atom-figlet/commit/805d209cf00dda7a5f4db6823121131d661e1941), [#1](https://github.com/abe33/atom-figlet/issues/1))  <br>It’ll convert the selection without prompting for the font. It’ll just
+  reuse either the settings value or the last picked font.
+- Add an atom-panel wrapper on the figlet font list ([50442063](https://github.com/abe33/atom-figlet/commit/504420630b369fb9e24dfabb34f8363675a8a097))
+
+## :bug: Bug Fixes
+
+- Fix invalid scope since use of custom elements ([146ac59c](https://github.com/abe33/atom-figlet/commit/146ac59c2d6f5b48a1be03bf8ecdbfc716f33b7a))
+
 <a name="v0.3.1"></a>
 # v0.3.1 (2015-01-23)
 
