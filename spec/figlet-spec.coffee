@@ -8,7 +8,7 @@ figlet = require 'figlet'
 # or `fdescribe`). Remove the `f` to unfocus the block.
 
 describe "Figlet", ->
-  [workspaceElement, editorElement, editor, promise, fonts, list] = []
+  [workspaceElement, editorElement, editor, promise, fonts, list, figletModule] = []
 
   beforeEach ->
     atom.config.set 'figlet.defaultFont', 'Banner'
@@ -23,11 +23,54 @@ describe "Figlet", ->
       editorElement = atom.views.getView(editor)
       editor.setText("dummy")
 
-    waitsForPromise -> atom.packages.activatePackage('figlet')
+    waitsForPromise -> atom.packages.activatePackage('figlet').then (pkg) ->
+      figletModule = pkg.mainModule
 
     runs -> figlet.fonts (err, data) -> fonts = data
 
     waitsFor -> fonts
+
+  describe 'when figlet:last-convert is triggered', ->
+    it 'converts the selection using the default font', ->
+      expected = null
+      editor.setSelectedBufferRange([[0,0],[0,5]])
+      atom.commands.dispatch editorElement, 'figlet:convert-last'
+
+      waitsFor -> editor.getText() isnt 'dummy'
+
+      runs ->
+        figlet.text 'dummy', font: 'Banner', (err, data) ->
+          expected = data
+
+      waitsFor -> expected
+
+      runs ->
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(editor.getText()).toEqual(expected)
+        expect(list).not.toExist()
+
+    it 'converts the selection using the module last font', ->
+      expected = null
+      figletModule.lastFont = 'Banner3'
+
+      editor.setSelectedBufferRange([[0,0],[0,5]])
+      atom.commands.dispatch editorElement, 'figlet:convert-last'
+
+      waitsFor -> editor.getText() isnt 'dummy'
+
+      runs ->
+        figlet.text 'dummy', font: 'Banner3', (err, data) ->
+          expected = data
+
+      waitsFor -> expected
+
+      runs ->
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(editor.getText()).toEqual(expected)
+        expect(list).not.toExist()
+
 
   describe 'when figlet:convert is triggered', ->
     describe 'with no selection', ->
@@ -40,6 +83,7 @@ describe "Figlet", ->
 
     describe 'with a selection', ->
       beforeEach ->
+        figletModule.lastFont = null
         editor.setSelectedBufferRange([[0,0],[0,5]])
         atom.commands.dispatch editorElement, 'figlet:convert'
 
@@ -53,13 +97,13 @@ describe "Figlet", ->
 
       describe 'when confirmed', ->
         it 'replaces the text with the ascii art version', (done) ->
-          Figlet.figletView.confirmed name: 'Banner'
+          Figlet.figletView.confirmed name: 'Banner3'
           expected = null
 
           waitsFor -> editor.getText() isnt 'dummy'
 
           runs ->
-            figlet.text 'dummy', font: 'Banner', (err, data) ->
+            figlet.text 'dummy', font: 'Banner3', (err, data) ->
               expected = data
 
           waitsFor -> expected
@@ -69,3 +113,5 @@ describe "Figlet", ->
 
             expect(editor.getText()).toEqual(expected)
             expect(list).not.toExist()
+
+            expect(figletModule.lastFont).toEqual('Banner3')

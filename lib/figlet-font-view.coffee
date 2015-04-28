@@ -15,7 +15,7 @@ class FigletFontView extends SelectListView
         @span class: 'badge', outlet: 'loadingBadge'
       @ol class: 'list-group', outlet: 'list'
 
-  initialize: (editor) ->
+  initialize: (editor, @figletPackage) ->
     previousElement = @element
     @element = @[0] = document.createElement('atom-panel')
     @[0].appendChild(previousElement)
@@ -24,6 +24,7 @@ class FigletFontView extends SelectListView
 
     @addClass('modal figlet-font-list overlay from-top')
     @setEditor(editor)
+
     figlet.fonts (err, data) =>
       @setItems data.map (f) -> name: f
 
@@ -56,6 +57,7 @@ class FigletFontView extends SelectListView
     super
 
   confirmed: (item) ->
+    @figletPackage.lastFont = item.name
     figlet.text @editor.getSelectedText(), font: item.name, (err, data) =>
       @editor.insertText data
 

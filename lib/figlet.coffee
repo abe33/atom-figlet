@@ -1,7 +1,9 @@
 FigletFontView = require './figlet-font-view'
+figlet = require 'figlet'
 
 module.exports =
   figletView: null
+  lastFont: null
 
   config:
     defaultFont:
@@ -17,11 +19,16 @@ module.exports =
         if @figletView?
           @figletView.setEditor(editor)
         else
-          @figletView = new FigletFontView(editor)
+          @figletView = new FigletFontView(editor, this)
 
         if @figletView.hasParent()
           @figletView.cancel()
         else
           @figletView.attach()
 
+      'figlet:convert-last': =>
+        editor = atom.workspace.getActiveTextEditor()
+
+        figlet.text editor.getSelectedText(), font: @lastFont ? atom.config.get('figlet.defaultFont'), (err, data) =>
+          editor.insertText data
   deactivate: ->
