@@ -8,7 +8,11 @@ module.exports =
   config:
     defaultFont:
       type: 'string'
-      default: 'Banner'
+      default: 'Banner3'
+    asComment:
+      type: 'boolean'
+      default: false
+      description: 'Add /* */ around the figlet text'
 
   activate: (state) ->
     atom.commands.add 'atom-text-editor',
@@ -30,5 +34,7 @@ module.exports =
         editor = atom.workspace.getActiveTextEditor()
 
         figlet.text editor.getSelectedText(), font: @lastFont ? atom.config.get('figlet.defaultFont'), (err, data) =>
-          editor.insertText data
+            if atom.config.get('figlet.asComment')
+                data = '/*\n\r' + data + '\n\r*/'
+            editor.insertText data
   deactivate: ->
