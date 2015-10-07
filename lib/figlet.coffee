@@ -1,5 +1,8 @@
-FigletFontView = require './figlet-font-view'
 figlet = require 'figlet'
+{OnigRegExp} = require 'oniguruma'
+{Point, Range} = require 'atom'
+
+FigletFontView = require './figlet-font-view'
 
 module.exports =
   figletView: null
@@ -33,8 +36,26 @@ module.exports =
 
   convert: (font) ->
     editor = atom.workspace.getActiveTextEditor()
+    [prefix, textToConvert, start, end] = @getTextToConvert(editor)
+    figlet.text textToConvert, {font}, (err, data) =>
+      text = data
+      .split('\n')
+      .map((l) -> (prefix + l).replace(/\s+$/, ''))
+      .filter((l) -> l.length > 0)
+      .join('\n')
+
+      editor.setTextInBufferRange([[start.row, 0], end], text)
+
+  getTextToConvert: (editor) ->
+    escapeRegExp = (str) ->
+      str.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'
+
     selection = editor.getLastSelection()
     {start, end} = selection.getBufferRange()
+
+    start = Point.fromObject([start.row, 0])
+
+    # First we'll catch all the leading space characters in the selection line
     selectionText = editor.getTextInRange([start, end])
     indentInSelection = /[^\s]/.exec(selectionText).index
 
@@ -42,9 +63,20 @@ module.exports =
       start.column += indentInSelection
       selectionText = selectionText[indentInSelection..-1]
 
+    # Then, for the remaining string, we'll check whether there's a comment
+    # or not
+    scope = editor.scopeDescriptorForBufferPosition([start.row, 0])
+    {commentStartString, commentEndString} = editor.languageMode.commentStartAndEndStringsForScope(scope)
+    commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '(?:$1)?')
+    commentStartRegex = new OnigRegExp("^(\\s*)(#{commentStartRegexString})")
+
+    match = commentStartRegex.searchSync(selectionText)
+
+    if match?
+      {length} = match[0]
+      start.column += length
+      selectionText = selectionText[length..-1]
+
     precedingText = editor.getTextInRange([[start.row, 0], start])
 
-    figlet.text selectionText, {font}, (err, data) =>
-      text = precedingText + data.replace(/\n/g, "\n#{precedingText}")
-      text = text.split('\n').map((l) -> l.replace(/\s+$/, '')).filter((l) -> l.length > 0).join('\n')
-      editor.setTextInBufferRange([[start.row, 0], end], text)
+    [precedingText, selectionText, start, end]

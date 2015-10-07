@@ -19,10 +19,11 @@ describe "Figlet", ->
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise -> atom.workspace.open('sample.js')
+    waitsForPromise -> atom.packages.activatePackage('language-javascript')
+    waitsForPromise -> atom.packages.activatePackage('language-html')
 
-    runs ->
-      editor = atom.workspace.getActiveTextEditor()
+    waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
+      editor = e
       editorElement = atom.views.getView(editor)
       editor.setText("dummy")
 
@@ -111,6 +112,52 @@ describe "Figlet", ->
       runs ->
         figlet.text 'dummy', font: 'Banner3', (err, data) ->
           expected = "  " + data.replace(/\n/g, '\n  ')
+
+      waitsFor -> expected
+
+      runs ->
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(editor.getText()).toEqual(strip(expected))
+        expect(list).not.toExist()
+
+    it 'preserves the comments when the selection does not contains it', ->
+      editor.setText("  // dummy")
+
+      expected = null
+      figletModule.lastFont = 'Banner3'
+
+      editor.setSelectedBufferRange([[0,5],[0,10]])
+      atom.commands.dispatch editorElement, 'figlet:convert-last'
+
+      waitsFor -> editor.getText() isnt 'dummy'
+
+      runs ->
+        figlet.text 'dummy', font: 'Banner3', (err, data) ->
+          expected = "  // " + data.replace(/\n/g, '\n  // ')
+
+      waitsFor -> expected
+
+      runs ->
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(editor.getText()).toEqual(strip(expected))
+        expect(list).not.toExist()
+
+    it 'preserves the comments when the selection contains it', ->
+      editor.setText("  // dummy")
+
+      expected = null
+      figletModule.lastFont = 'Banner3'
+
+      editor.setSelectedBufferRange([[0,0],[0,10]])
+      atom.commands.dispatch editorElement, 'figlet:convert-last'
+
+      waitsFor -> editor.getText() isnt 'dummy'
+
+      runs ->
+        figlet.text 'dummy', font: 'Banner3', (err, data) ->
+          expected = "  // " + data.replace(/\n/g, '\n  // ')
 
       waitsFor -> expected
 
