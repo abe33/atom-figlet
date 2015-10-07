@@ -1,3 +1,15 @@
+<a name="v0.5.0"></a>
+# v0.5.0 (2015-10-07)
+
+## :sparkles: Features
+
+- Implement preserving single comment before the expression to convert ([71252b8c](https://github.com/abe33/atom-figlet/commit/71252b8c91a038e092935f847a73de1246ce4aff), [#3](https://github.com/abe33/atom-figlet/issues/3))
+- Implement stripping trailing whitespaces and empty lines ([0ce1cf37](https://github.com/abe33/atom-figlet/commit/0ce1cf375611298393c0119a033aa0e6ff8b8384), [#6](https://github.com/abe33/atom-figlet/issues/6))
+
+## :bug: Bug Fixes
+
+- Fix indentation not preserved on conversion ([e5587d71](https://github.com/abe33/atom-figlet/commit/e5587d71814b4342402c847fc29697f364eea241), [#5](https://github.com/abe33/atom-figlet/issues/5))
+
 <a name="v0.4.0"></a>
 # v0.4.0 (2015-04-28)
 
