@@ -27,8 +27,23 @@ module.exports =
           @figletView.attach()
 
       'figlet:convert-last': =>
-        editor = atom.workspace.getActiveTextEditor()
+        @convert @lastFont ? atom.config.get('figlet.defaultFont')
 
-        figlet.text editor.getSelectedText(), font: @lastFont ? atom.config.get('figlet.defaultFont'), (err, data) =>
-          editor.insertText data
   deactivate: ->
+
+  convert: (font) ->
+    editor = atom.workspace.getActiveTextEditor()
+    selection = editor.getLastSelection()
+    {start, end} = selection.getBufferRange()
+    selectionText = editor.getTextInRange([start, end])
+    indentInSelection = /[^\s]/.exec(selectionText).index
+
+    if indentInSelection > 0
+      start.column += indentInSelection
+      selectionText = selectionText[indentInSelection..-1]
+
+    precedingText = editor.getTextInRange([[start.row, 0], start])
+
+    figlet.text selectionText, {font}, (err, data) =>
+      text = precedingText + data.replace(/\n/g, "\n#{precedingText}")
+      editor.setTextInBufferRange([[start.row, 0], end], text)

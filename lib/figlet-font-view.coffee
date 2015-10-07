@@ -58,9 +58,7 @@ class FigletFontView extends SelectListView
 
   confirmed: (item) ->
     @figletPackage.lastFont = item.name
-    figlet.text @editor.getSelectedText(), font: item.name, (err, data) =>
-      @editor.insertText data
-
+    @figletPackage.convert(item.name)
     @detach()
 
   cancel: ->
