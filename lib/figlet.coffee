@@ -46,4 +46,5 @@ module.exports =
 
     figlet.text selectionText, {font}, (err, data) =>
       text = precedingText + data.replace(/\n/g, "\n#{precedingText}")
+      text = text.split('\n').map((l) -> l.replace(/\s+$/, '')).filter((l) -> l.length > 0).join('\n')
       editor.setTextInBufferRange([[start.row, 0], end], text)

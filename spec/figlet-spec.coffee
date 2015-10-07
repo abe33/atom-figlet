@@ -10,6 +10,9 @@ figlet = require 'figlet'
 describe "Figlet", ->
   [workspaceElement, editorElement, editor, promise, fonts, list, figletModule] = []
 
+  strip = (s) ->
+    s.split('\n').map((l) -> l.replace(/\s+$/, '')).filter((l) -> l.length > 0).join('\n')
+
   beforeEach ->
     atom.config.set 'figlet.defaultFont', 'Banner'
 
@@ -47,7 +50,7 @@ describe "Figlet", ->
       runs ->
         list = workspaceElement.querySelector('.figlet-font-list')
 
-        expect(editor.getText()).toEqual(expected)
+        expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
     it 'converts the selection using the module last font', ->
@@ -68,7 +71,7 @@ describe "Figlet", ->
       runs ->
         list = workspaceElement.querySelector('.figlet-font-list')
 
-        expect(editor.getText()).toEqual(expected)
+        expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
     it 'preserves the indentation when the selection does not contains it', ->
@@ -91,7 +94,7 @@ describe "Figlet", ->
       runs ->
         list = workspaceElement.querySelector('.figlet-font-list')
 
-        expect(editor.getText()).toEqual(expected)
+        expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
     it 'preserves the indentation', ->
@@ -114,7 +117,7 @@ describe "Figlet", ->
       runs ->
         list = workspaceElement.querySelector('.figlet-font-list')
 
-        expect(editor.getText()).toEqual(expected)
+        expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
   describe 'when figlet:convert is triggered', ->
@@ -156,7 +159,7 @@ describe "Figlet", ->
           runs ->
             list = workspaceElement.querySelector('.figlet-font-list')
 
-            expect(editor.getText()).toEqual(expected)
+            expect(editor.getText()).toEqual(strip(expected))
             expect(list).not.toExist()
 
             expect(figletModule.lastFont).toEqual('Banner3')
