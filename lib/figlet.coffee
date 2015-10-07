@@ -67,15 +67,17 @@ module.exports =
     # or not
     scope = editor.scopeDescriptorForBufferPosition([start.row, 0])
     {commentStartString, commentEndString} = editor.languageMode.commentStartAndEndStringsForScope(scope)
-    commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '(?:$1)?')
-    commentStartRegex = new OnigRegExp("^(\\s*)(#{commentStartRegexString})")
 
-    match = commentStartRegex.searchSync(selectionText)
+    if commentStartString?
+      commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '(?:$1)?')
+      commentStartRegex = new OnigRegExp("^(\\s*)(#{commentStartRegexString})")
 
-    if match?
-      {length} = match[0]
-      start.column += length
-      selectionText = selectionText[length..-1]
+      match = commentStartRegex.searchSync(selectionText)
+
+      if match?
+        {length} = match[0]
+        start.column += length
+        selectionText = selectionText[length..-1]
 
     precedingText = editor.getTextInRange([[start.row, 0], start])
 
