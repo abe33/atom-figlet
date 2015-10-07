@@ -97,7 +97,7 @@ describe "Figlet", ->
         expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
-    it 'preserves the indentation', ->
+    it 'preserves the indentation when the selection contains it', ->
       editor.setText("  dummy")
 
       expected = null
