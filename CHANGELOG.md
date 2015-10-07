@@ -1,3 +1,10 @@
+<a name="v0.5.1"></a>
+# v0.5.1 (2015-10-07)
+
+## :bug: Bug Fixes
+
+- Fix potential error if the grammar doesn't have a comment form ([36edf3ec](https://github.com/abe33/atom-figlet/commit/36edf3ec1d81530d3edd43c8291d814249ff7250))
+
 <a name="v0.5.0"></a>
 # v0.5.0 (2015-10-07)
 
