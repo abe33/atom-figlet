@@ -1,3 +1,10 @@
+<a name="v0.5.2"></a>
+# v0.5.2 (2015-10-12)
+
+## :bug: Bug Fixes
+
+- Remove oniguruma from dependencies ([4bf6e47e](https://github.com/abe33/atom-figlet/commit/4bf6e47e1669610555eaa468972e5e9119c1b318), [#7](https://github.com/abe33/atom-figlet/issues/7))
+
 <a name="v0.5.1"></a>
 # v0.5.1 (2015-10-07)
 
