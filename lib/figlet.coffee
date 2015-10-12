@@ -1,5 +1,4 @@
 figlet = require 'figlet'
-{OnigRegExp} = require 'oniguruma'
 {Point, Range} = require 'atom'
 
 FigletFontView = require './figlet-font-view'
@@ -70,9 +69,9 @@ module.exports =
 
     if commentStartString?
       commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '(?:$1)?')
-      commentStartRegex = new OnigRegExp("^(\\s*)(#{commentStartRegexString})")
+      commentStartRegex = new RegExp("^(\\s*)(#{commentStartRegexString})")
 
-      match = commentStartRegex.searchSync(selectionText)
+      match = commentStartRegex.exec(selectionText)
 
       if match?
         {length} = match[0]
