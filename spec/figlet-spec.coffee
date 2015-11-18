@@ -167,6 +167,29 @@ describe "Figlet", ->
         expect(editor.getText()).toEqual(strip(expected))
         expect(list).not.toExist()
 
+    it 'preserves every additional comment character and spaces before a word', ->
+      editor.setText("  //    dummy")
+
+      expected = null
+      figletModule.lastFont = 'Banner3'
+
+      editor.setSelectedBufferRange([[0,0],[0,15]])
+      atom.commands.dispatch editorElement, 'figlet:convert-last'
+
+      waitsFor -> editor.getText() isnt 'dummy'
+
+      runs ->
+        figlet.text 'dummy', font: 'Banner3', (err, data) ->
+          expected = "  //    " + data.replace(/\n/g, '\n  //    ')
+
+      waitsFor -> expected
+
+      runs ->
+        list = workspaceElement.querySelector('.figlet-font-list')
+
+        expect(editor.getText()).toEqual(strip(expected))
+        expect(list).not.toExist()
+
   describe 'when figlet:convert is triggered', ->
     describe 'with no selection', ->
       it 'does not display the font selection list', ->

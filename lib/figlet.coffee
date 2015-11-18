@@ -68,8 +68,8 @@ module.exports =
     {commentStartString, commentEndString} = editor.languageMode.commentStartAndEndStringsForScope(scope)
 
     if commentStartString?
-      commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '(?:$1)?')
-      commentStartRegex = new RegExp("^(\\s*)(#{commentStartRegexString})")
+      commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '')
+      commentStartRegex = new RegExp("^(\\s*)(#{commentStartRegexString})*\\s+")
 
       match = commentStartRegex.exec(selectionText)
 
