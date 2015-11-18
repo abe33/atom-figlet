@@ -1,3 +1,10 @@
+<a name="v0.5.3"></a>
+# v0.5.3 (2015-11-19)
+
+## :sparkles: Features
+
+- Implement supporting prefix with several spaces and comment chars ([ec59ccb0](https://github.com/abe33/atom-figlet/commit/ec59ccb0c4123981f6f08b2ecfea33c6d544fedd))
+
 <a name="v0.5.2"></a>
 # v0.5.2 (2015-10-12)
 
