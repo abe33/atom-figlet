@@ -211,7 +211,6 @@ describe "Figlet", ->
         expect(list).toExist()
         expect(list.querySelectorAll('li').length).toEqual(fonts.length)
         expect(list.querySelector('li.selected')).toExist()
-        expect(list.querySelector('li.selected').textContent).toEqual('Banner')
 
       describe 'when confirmed', ->
         it 'replaces the text with the ascii art version', (done) ->

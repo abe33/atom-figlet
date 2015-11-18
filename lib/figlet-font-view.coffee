@@ -28,8 +28,9 @@ class FigletFontView extends SelectListView
     figlet.fonts (err, data) =>
       @setItems data.map (f) -> name: f
 
-      itemView = @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']")
-      @selectItemView itemView
+      requestAnimationFrame =>
+        itemView = @find("li[data-font='#{atom.config.get 'figlet.defaultFont'}']")
+        @selectItemView itemView
 
   getFilterKey: -> 'name'
 
