@@ -1,3 +1,10 @@
+<a name="v0.5.4"></a>
+# v0.5.4 (2016-08-23)
+
+## :bug: Bug Fixes
+
+- Fix error due to change in API in latest Atom version ([7b65f4bb](https://github.com/abe33/atom-figlet/commit/7b65f4bb58d61e66b6acb0d09929f3639dce9f4c))
+
 <a name="v0.5.3"></a>
 # v0.5.3 (2015-11-19)
 
