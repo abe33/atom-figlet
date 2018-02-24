@@ -65,7 +65,15 @@ module.exports =
     # Then, for the remaining string, we'll check whether there's a comment
     # or not
     scope = editor.scopeDescriptorForBufferPosition([start.row, 0])
-    {commentStartString, commentEndString} = editor.languageMode.commentStartAndEndStringsForScope?(scope) ? editor.getCommentStrings(scope)
+    
+    {commentStartString, commentEndString} = (
+        editor.languageMode.commentStartAndEndStringsForScope?(scope) ?
+        editor.getCommentStrings?(scope) ?
+        editor.getScopedSettingsDelegate?().getCommentStrings(scope) ?
+        editor.tokenizedBuffer.commentStringsForPosition(
+          editor.getCursorBufferPosition()
+        );
+    )
 
     if commentStartString?
       commentStartRegexString = escapeRegExp(commentStartString).replace(/(\s+)$/, '')
